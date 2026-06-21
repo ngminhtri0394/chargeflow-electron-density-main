@@ -360,23 +360,25 @@ def train(config: dict, args):
     logger.info(f"Training completed in {total_time_str}")
 
 
+class TrainArgs:
+    """Module-level args object (picklable, so it can be stored in checkpoints)."""
+    def __init__(self, config):
+        self.output_dir = config['output'].get('output_dir', './output_dir')
+        self.save_postfix = config['output'].get('save_postfix', 'FlowEDP')
+        self.accum_iter = config['training'].get('accum_iter', 1)
+        self.lr = config['training'].get('learning_rate', 0.0001)
+        self.loss_type = config['training'].get('loss_type', 'l2')
+        self.alpha = config['training'].get('alpha', 2.0)
+        self.norm_rho = config['data'].get('normalize_density', False)
+        self.discrete_flow_matching = config['model'].get('discrete_flow_matching', False)
+        self.class_drop_prob = config['training'].get('class_drop_prob', 0.0)
+        self.skewed_timesteps = config['ode'].get('skewed_timesteps', False)
+        self.start_sad = config['training'].get('start_sad', False)
+        self.test_run = config.get('test_run', False)
+
+
 def create_train_args(config: dict):
     """Create an args object compatible with training functions."""
-    class TrainArgs:
-        def __init__(self, config):
-            self.output_dir = config['output'].get('output_dir', './output_dir')
-            self.save_postfix = config['output'].get('save_postfix', 'FlowEDP')
-            self.accum_iter = config['training'].get('accum_iter', 1)
-            self.lr = config['training'].get('learning_rate', 0.0001)
-            self.loss_type = config['training'].get('loss_type', 'l2')
-            self.alpha = config['training'].get('alpha', 2.0)
-            self.norm_rho = config['data'].get('normalize_density', False)
-            self.discrete_flow_matching = config['model'].get('discrete_flow_matching', False)
-            self.class_drop_prob = config['training'].get('class_drop_prob', 0.0)
-            self.skewed_timesteps = config['ode'].get('skewed_timesteps', False)
-            self.start_sad = config['training'].get('start_sad', False)
-            self.test_run = config.get('test_run', False)
-
     return TrainArgs(config)
 
 
