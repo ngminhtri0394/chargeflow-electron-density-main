@@ -1,0 +1,164 @@
+# Dataset Configuration Mapping
+# This file provides easy reference for all available datasets
+
+# ==============================================================================
+# TRAINING DATASETS
+# ==============================================================================
+
+training_datasets:
+  # Main charged systems dataset
+  charged:
+    name: "Charged Electron Density Systems"
+    data_list: "data_lists/training/list_d_charged_train"
+    label_list: "data_lists/training/list_l_charged_train"
+    data_gridsize: "data_lists/training/list_dgs_charged_train"
+    label_gridsize: "data_lists/training/list_lgs_charged_train"
+    val_data_list: "data_lists/training/list_d_charged_val"
+    val_label_list: "data_lists/training/list_l_charged_val"
+    val_data_gridsize: "data_lists/training/list_dgs_charged_val"
+    val_label_gridsize: "data_lists/training/list_lgs_charged_val"
+    test_data_list: "data_lists/training/list_d_charged_test"
+    test_label_list: "data_lists/training/list_l_charged_test"
+    test_data_gridsize: "data_lists/training/list_dgs_charged_test"
+    test_label_gridsize: "data_lists/training/list_lgs_charged_test"
+    train_stats: "data_lists/stats/train_stats.json"
+  
+  # Materials Project subset (12k charged)
+  subMP_12k_charged:
+    name: "Materials Project 12k Charged"
+    data_list: "data_lists/training/list_d_subMP_12k_charged_train"
+    label_list: "data_lists/training/list_l_subMP_12k_charged_train"
+    data_gridsize: "data_lists/training/list_dgs_subMP_12k_charged_train"
+    label_gridsize: "data_lists/training/list_lgs_subMP_12k_charged_train"
+    test_data_list: "data_lists/training/list_d_subMP_12k_charged_test"
+    test_label_list: "data_lists/training/list_l_subMP_12k_charged_test"
+    test_data_gridsize: "data_lists/training/list_dgs_subMP_12k_charged_test"
+    test_label_gridsize: "data_lists/training/list_lgs_subMP_12k_charged_test"
+    train_stats: "data_lists/stats/train_stats.json"
+  
+  # SubMP with start charge
+  subMP_12k_charged_start_charge:
+    name: "Materials Project 12k with Start Charge"
+    data_list: "data_lists/training/list_d_subMP_12k_charged_start_charge_train"
+    label_list: "data_lists/training/list_l_subMP_12k_charged_start_charge_train"
+    data_gridsize: "data_lists/training/list_dgs_subMP_12k_charged_start_charge_train"
+    label_gridsize: "data_lists/training/list_lgs_subMP_12k_charged_start_charge_train"
+    test_data_list: "data_lists/training/list_d_subMP_12k_charged_start_charge_test"
+    test_label_list: "data_lists/training/list_l_subMP_12k_charged_start_charge_test"
+    test_data_gridsize: "data_lists/training/list_dgs_subMP_12k_charged_start_charge_test"
+    test_label_gridsize: "data_lists/training/list_lgs_subMP_12k_charged_start_charge_test"
+    train_stats: "data_lists/stats/train_stats.json"
+  
+  # Defects charged
+  defects_charged:
+    name: "Charged Defects"
+    data_list: "data_lists/training/list_d_defects_charged"
+    label_list: "data_lists/training/list_l_defects_charged"
+    data_gridsize: "data_lists/training/list_dgs_defects_charged"
+    label_gridsize: "data_lists/training/list_lgs_defects_charged"
+    train_stats: "data_lists/stats/train_stats_defects_charged.json"
+
+# ==============================================================================
+# TEST SETS - EXTREME DATASETS (Generalization Testing)
+# ==============================================================================
+
+test_sets_extreme:
+  extreme_mofs:
+    name: "Extreme Metal-Organic Frameworks"
+    description: "Challenging MOF structures for generalization testing"
+    data_list: "data_lists/test_sets/list_d_extreme_mofs"
+    label_list: "data_lists/test_sets/list_l_extreme_mofs"
+    data_gridsize: "data_lists/test_sets/list_dgs_extreme_mofs"
+    label_gridsize: "data_lists/test_sets/list_lgs_extreme_mofs"
+    train_stats: "data_lists/stats/train_stats_mofs.json"
+  
+  extreme_electrene:
+    name: "Extreme Electrene Materials"
+    description: "Challenging electrene structures"
+    data_list: "data_lists/test_sets/list_d_extreme_electrene"
+    label_list: "data_lists/test_sets/list_l_extreme_electrene"
+    data_gridsize: "data_lists/test_sets/list_dgs_extreme_electrene"
+    label_gridsize: "data_lists/test_sets/list_lgs_extreme_electrene"
+    train_stats: "data_lists/stats/train_stats_electrenes.json"
+  
+  extreme_organic:
+    name: "Extreme Organic Materials"
+    description: "Challenging organic structures"
+    data_list: "data_lists/test_sets/list_d_extreme_organic"
+    label_list: "data_lists/test_sets/list_l_extreme_organic"
+    data_gridsize: "data_lists/test_sets/list_dgs_extreme_organic"
+    label_gridsize: "data_lists/test_sets/list_lgs_extreme_organic"
+    train_stats: "data_lists/stats/train_stats_organic.json"
+
+# ==============================================================================
+# TEST SETS - MATERIAL TYPES (Domain-Specific Testing)
+# ==============================================================================
+
+test_sets_materials:
+  mofs:
+    name: "Metal-Organic Frameworks"
+    description: "Standard MOF test set"
+    data_list: "data_lists/test_sets/list_d_mofs"
+    label_list: "data_lists/test_sets/list_l_mofs"
+    data_gridsize: "data_lists/test_sets/list_dgs_mofs"
+    label_gridsize: "data_lists/test_sets/list_lgs_mofs"
+    train_stats: "data_lists/stats/train_stats_mofs.json"
+  
+  electrenes:
+    name: "Electrene Materials"
+    description: "Standard electrene test set"
+    data_list: "data_lists/test_sets/list_d_electrenes"
+    label_list: "data_lists/test_sets/list_l_electrenes"
+    data_gridsize: "data_lists/test_sets/list_dgs_electrenes"
+    label_gridsize: "data_lists/test_sets/list_lgs_electrenes"
+    train_stats: "data_lists/stats/train_stats_electrenes.json"
+  
+  organic:
+    name: "Organic Materials"
+    description: "Standard organic materials test set"
+    data_list: "data_lists/test_sets/list_d_organic"
+    label_list: "data_lists/test_sets/list_l_organic"
+    data_gridsize: "data_lists/test_sets/list_dgs_organic"
+    label_gridsize: "data_lists/test_sets/list_lgs_organic"
+    train_stats: "data_lists/stats/train_stats_organic.json"
+  
+  organic_molecules:
+    name: "Organic Molecules"
+    description: "Organic molecules test set"
+    data_list: "data_lists/test_sets/list_d_organic_molecules"
+    label_list: "data_lists/test_sets/list_l_organic_molecules"
+    data_gridsize: "data_lists/test_sets/list_dgs_organic_molecules"
+    label_gridsize: "data_lists/test_sets/list_lgs_organic_molecules"
+    train_stats: "data_lists/stats/train_stats_organic_molecules.json"
+  
+  perovskites:
+    name: "Perovskite Structures"
+    description: "Perovskite materials test set"
+    data_list: "data_lists/test_sets/list_d_perovskites"
+    label_list: "data_lists/test_sets/list_l_perovskites"
+    data_gridsize: "data_lists/test_sets/list_dgs_perovskites"
+    label_gridsize: "data_lists/test_sets/list_lgs_perovskites"
+    train_stats: "data_lists/stats/train_stats_perovskites.json"
+
+# ==============================================================================
+# TEST SETS - DEFECTS (Defect-Specific Testing)
+# ==============================================================================
+
+test_sets_defects:
+  special_defects_diamond:
+    name: "Special Diamond Defects"
+    description: "Special defect structures in diamond"
+    data_list: "data_lists/test_sets/list_d_special_defects_diamond"
+    label_list: "data_lists/test_sets/list_l_special_defects_diamond"
+    data_gridsize: "data_lists/test_sets/list_dgs_special_defects_diamond"
+    label_gridsize: "data_lists/test_sets/list_lgs_special_defects_diamond"
+    train_stats: "data_lists/stats/train_stats_multisite_defects_diamond.json"
+  
+  multisite_defects_diamond:
+    name: "Multi-site Diamond Defects"
+    description: "Multi-site defect structures in diamond"
+    data_list: "data_lists/test_sets/list_d_multisite_defects_diamond"
+    label_list: "data_lists/test_sets/list_l_multisite_defects_diamond"
+    data_gridsize: "data_lists/test_sets/list_dgs_multisite_defects_diamond"
+    label_gridsize: "data_lists/test_sets/list_lgs_multisite_defects_diamond"
+    train_stats: "data_lists/stats/train_stats_multisite_defects_diamond.json"

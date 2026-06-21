@@ -1,0 +1,116 @@
+# SLURM Default Configuration
+# This file stores common SLURM job parameters to avoid retyping them.
+# Override any value by passing environment variables when submitting jobs.
+
+# Default Resource Allocation
+resources:
+  # Single GPU job defaults
+  single_gpu:
+    partition: "gpu"
+    nodes: 1
+    ntasks_per_node: 1
+    gpus_per_node: 1
+    cpus_per_task: 8
+    memory: "32G"
+    time: "24:00:00"
+  
+  # Multi-GPU single node defaults
+  multi_gpu:
+    partition: "gpu"
+    nodes: 1
+    ntasks_per_node: 4
+    gpus_per_node: 4
+    cpus_per_task: 8
+    memory: "128G"
+    time: "48:00:00"
+  
+  # Multi-node defaults
+  multi_node:
+    partition: "gpu"
+    nodes: 4
+    ntasks_per_node: 4
+    gpus_per_node: 4
+    cpus_per_task: 8
+    memory: "128G"
+    time: "72:00:00"
+  
+  # Inference defaults
+  inference:
+    partition: "gpu"
+    nodes: 1
+    ntasks_per_node: 1
+    gpus_per_node: 1
+    cpus_per_task: 4
+    memory: "32G"
+    time: "12:00:00"
+
+# Environment Configuration
+environment:
+  conda_env: "flowmatch"
+  module_loads:
+    - "cuda/11.8"
+    - "cudnn/8.6"
+  
+# Path Configuration
+paths:
+  # Project paths
+  project_root: "/path/to/chargeflow-electron-density"
+  code_dir: "${project_root}"
+  
+  # Data paths
+  data_root: "/path/to/your/data"
+  train_data_list: "${data_root}/list_d_train"
+  train_label_list: "${data_root}/list_l_train"
+  train_data_gridsize: "${data_root}/list_dgs_train"
+  train_label_gridsize: "${data_root}/list_lgs_train"
+  
+  val_data_list: "${data_root}/list_d_val"
+  val_label_list: "${data_root}/list_l_val"
+  val_data_gridsize: "${data_root}/list_dgs_val"
+  val_label_gridsize: "${data_root}/list_lgs_val"
+  
+  # Output paths
+  output_dir: "${code_dir}/output_dir"
+  log_dir: "${code_dir}/logs"
+
+# Training Configuration
+training:
+  # Model settings
+  model: "unet3d"
+  in_channels: 1
+  out_channels: 1
+  base_channels: 32
+  
+  # Training parameters
+  batch_size: 16
+  learning_rate: 0.0001
+  num_epochs: 100
+  
+  # Optimization
+  optimizer: "adamw"
+  weight_decay: 0.01
+  grad_clip: 1.0
+  
+  # Distributed settings
+  backend: "nccl"
+  find_unused_parameters: false
+
+# Inference Configuration
+inference:
+  batch_size: 8
+  num_workers: 4
+  output_format: "npy"
+  save_metrics: true
+
+# Notification Settings
+notifications:
+  email: "your.email@example.com"
+  notify_on_start: false
+  notify_on_end: true
+  notify_on_fail: true
+
+# Job Naming Convention
+job_naming:
+  prefix: "edp"
+  include_timestamp: true
+  include_config: true

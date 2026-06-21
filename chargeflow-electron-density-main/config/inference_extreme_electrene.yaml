@@ -1,0 +1,27 @@
+# Inference Configuration: Extreme Electrene
+# Challenging electrene material structures
+
+model:
+  name: "unet3d"
+  in_channels: 1
+  out_channels: 1
+
+data:
+  test_data_list: "data_lists/test_sets/list_d_extreme_electrene"
+  test_label_list: "data_lists/test_sets/list_l_extreme_electrene"
+  test_data_gridsize: "data_lists/test_sets/list_dgs_extreme_electrene"
+  test_label_gridsize: "data_lists/test_sets/list_lgs_extreme_electrene"
+  train_stats: "data_lists/stats/train_stats_electrenes.json"
+  batch_size: 1
+  num_workers: 4
+
+inference:
+  num_steps: 50
+  ode_method: "heun2"
+  use_ema: true
+  save_predictions: true
+  calculate_metrics: true
+
+output:
+  output_dir: "predictions/extreme_electrene"
+  log_file: "predictions/extreme_electrene/inference.log"

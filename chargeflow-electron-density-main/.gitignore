@@ -1,0 +1,24 @@
+paper/
+
+# Python cache and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Training and inference outputs
+logs/
+output/
+output_dir/
+predictions/
+wandb/
+runs/
+
+# Local environments and editor files
+.env
+.venv/
+venv/
+.idea/
+.vscode/
+
+# Generated local audit artifact with machine-specific paths
+data_lists/stats/publication_asset_audit.json

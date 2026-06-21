@@ -1,0 +1,25 @@
+# Charged Systems Preset
+# Optimized for charged electron density prediction
+
+resources:
+  multi_gpu:
+    partition: "gpu"
+    nodes: 1
+    ntasks_per_node: 4
+    time: "48:00:00"
+
+training:
+  batch_size: 16
+  learning_rate: 0.0001
+  num_epochs: 150
+  
+  # Charged system specific
+  use_charge_data: true
+  charge_weight: 1.0
+
+paths:
+  # Override with charged data paths
+  train_data_list: "${data_root}/charged/list_d_train"
+  train_label_list: "${data_root}/charged/list_l_train"
+  train_data_gridsize: "${data_root}/charged/list_dgs_train"
+  train_label_gridsize: "${data_root}/charged/list_lgs_train"

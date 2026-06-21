@@ -1,0 +1,146 @@
+# SLURM Job Configurations - Real Values from Your Scripts
+# This file stores the actual configurations from your original SLURM scripts
+# so you can reuse them without retyping everything.
+
+# ============================================
+# COMMON SETTINGS (Used across multiple jobs)
+# ============================================
+
+common:
+  # Cluster settings
+  partition: "gpu"
+  gpu_type: "v100"
+  qos: "batch-short"
+  
+  # Environment
+  conda_env: "flow_matching"
+  modules:
+    - "Anaconda3"
+  
+  # Paths
+  project_root: "/home/minhtrin/Charged_electron_density/flow_matching"
+  log_dir: "/home/minhtrin/Charged_electron_density/flow_matching/examples/image/log"
+  model_dir: "/vast/minhtrin/Charged_electron_density/FlowEDP/models/save_model"
+
+# ============================================
+# CHECKPOINT PATHS (Your trained models)
+# ============================================
+
+checkpoints:
+  sad_neutral_xlarge_hybrid_loss: "/vast/minhtrin/Charged_electron_density/FlowEDP/models/save_model/best_model-FlowEDP_sad_neutral_xlarge_hybrid_loss_eval_test_set_normal_timestep_lr_00005_3.pth"
+  # Add more checkpoint paths here as you train new models
+  # model_v2: "/path/to/checkpoint-v2.pth"
+  # model_v3: "/path/to/checkpoint-v3.pth"
+
+# ============================================
+# DATASET CONFIGURATIONS
+# ============================================
+
+datasets:
+  unet_uncond_neutral_xlarge:
+    name: "unet_uncond_neutral_xlarge"
+    type: "neutral"
+
+# ============================================
+# TEST SETS (Different test datasets)
+# ============================================
+
+testsets:
+  special_defects_diamond:
+    name: "special_defects_diamond"
+    description: "Special defects in diamond structures"
+    
+  extreme_mofs:
+    name: "extreme_mofs"
+    description: "Extreme metal-organic frameworks"
+    
+  # Add more test sets as needed
+  # perovskites:
+  #   name: "perovskites"
+  #   description: "Perovskite materials"
+
+# ============================================
+# PREDICTION CONFIGURATIONS
+# ============================================
+
+prediction_jobs:
+  # Configuration 1: Neutral prediction on SpecialDefects Diamond
+  neutral_special_defects_diamond:
+    job_name: "FlowEDP_neutral_prediction_SpecialDefectsDiamond_FlowEDP_sad_neutral_xlarge_hybrid_loss_heun2"
+    checkpoint: "${checkpoints.sad_neutral_xlarge_hybrid_loss}"
+    dataset: "unet_uncond_neutral_xlarge"
+    testset: "special_defects_diamond"
+    
+    # SLURM resources
+    resources:
+      nodes: 1
+      gpus: 1
+      cpus_per_task: 5
+      time: "1:00:00"
+    
+    # Script arguments
+    script_args:
+      start_sad: true
+      eval_only: true
+      batch_size: 1
+      use_ema: true
+      ode_method: "heun2"
+      ode_options: '{"nfe": 50}'
+  
+  # Configuration 2: Neutral prediction on Extreme MOFs
+  neutral_extreme_mofs:
+    job_name: "FlowEDP_prediction_extreme_mofs_FlowEDP_sad_neutral_xlarge_hybrid_loss_heun2"
+    checkpoint: "${checkpoints.sad_neutral_xlarge_hybrid_loss}"
+    dataset: "unet_uncond_neutral_xlarge"
+    testset: "extreme_mofs"
+    
+    resources:
+      nodes: 1
+      gpus: 1
+      cpus_per_task: 5
+      time: "10:00:00"
+    
+    script_args:
+      start_sad: true
+      eval_only: true
+      batch_size: 1
+      use_ema: true
+      ode_method: "heun2"
+      ode_options: '{"nfe": 50}'
+
+# ============================================
+# TRAINING CONFIGURATIONS
+# ============================================
+
+training_jobs:
+  # Add your training job configurations here
+  # Example:
+  # train_neutral_xlarge:
+  #   job_name: "FlowEDP_train_neutral_xlarge"
+  #   dataset: "unet_uncond_neutral_xlarge"
+  #   resources:
+  #     nodes: 4
+  #     gpus_per_node: 4
+  #     time: "48:00:00"
+  #   training_args:
+  #     batch_size: 16
+  #     learning_rate: 0.0001
+  #     num_epochs: 100
+
+# ============================================
+# INFERENCE METHOD CONFIGURATIONS
+# ============================================
+
+ode_methods:
+  heun2_50:
+    method: "heun2"
+    options: '{"nfe": 50}'
+  
+  heun2_100:
+    method: "heun2"
+    options: '{"nfe": 100}'
+  
+  # Add more ODE methods as needed
+  # rk45:
+  #   method: "rk45"
+  #   options: '{"atol": 1e-5, "rtol": 1e-5}'

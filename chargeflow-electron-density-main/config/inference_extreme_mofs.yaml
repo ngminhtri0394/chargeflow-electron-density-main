@@ -1,0 +1,27 @@
+# Inference Configuration: Extreme MOFs
+# Challenging Metal-Organic Framework structures for generalization testing
+
+model:
+  name: "unet3d"
+  in_channels: 1
+  out_channels: 1
+
+data:
+  test_data_list: "data_lists/test_sets/list_d_extreme_mofs"
+  test_label_list: "data_lists/test_sets/list_l_extreme_mofs"
+  test_data_gridsize: "data_lists/test_sets/list_dgs_extreme_mofs"
+  test_label_gridsize: "data_lists/test_sets/list_lgs_extreme_mofs"
+  train_stats: "data_lists/stats/train_stats_mofs.json"
+  batch_size: 1
+  num_workers: 4
+
+inference:
+  num_steps: 50
+  ode_method: "heun2"
+  use_ema: true
+  save_predictions: true
+  calculate_metrics: true
+
+output:
+  output_dir: "predictions/extreme_mofs"
+  log_file: "predictions/extreme_mofs/inference.log"

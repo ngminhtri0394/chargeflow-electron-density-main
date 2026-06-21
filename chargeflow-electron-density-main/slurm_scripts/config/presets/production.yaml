@@ -1,0 +1,19 @@
+# Production Preset
+# Full training run with optimal resources
+
+resources:
+  multi_node:
+    partition: "gpu"
+    nodes: 8
+    time: "96:00:00"
+    memory: "256G"
+
+training:
+  batch_size: 32
+  num_epochs: 200
+  learning_rate: 0.0002
+  
+notifications:
+  notify_on_start: true
+  notify_on_end: true
+  notify_on_fail: true

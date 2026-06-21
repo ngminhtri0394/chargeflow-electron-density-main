@@ -1,0 +1,99 @@
+# Configuration for E2a — Perovskite-specialized ChargeFlow (Colab, resumable)
+#
+# Purpose: chemistry-homogeneous proof-of-principle for the editor gate
+# (<1% epsilon_MAE on a parent-disjoint held-out perovskite split), per
+# the revision plan E2a. Sized for a single Colab A100 with short,
+# resumable sessions — NOT the 5000-epoch general-model budget.
+#
+# Paths marked <COLAB> are filled in by the Colab notebook after the
+# perovskite tarballs are extracted and the parent-disjoint split is built.
+
+# ---------------------------------------------------------------------------
+# Model — the real 3D refinement net (NOT the 2D `cifar10` placeholder).
+# unet_cond: dims=3, in=2 (SAD + charge-cond), model_channels=4,
+# input_downscale=2 (U-Net runs at half grid resolution -> cheaper).
+# Start small; only bump to unet_cond_xlarge if <1% is not reached.
+# ---------------------------------------------------------------------------
+model:
+  architecture: "unet_cond"
+  discrete_flow_matching: false
+  use_ema: true
+
+data:
+  # Filled in by the notebook (point at the perovskite-only lists)
+  train_data_list: "<COLAB>/list_d_perovskite_train"
+  train_label_list: "<COLAB>/list_l_perovskite_train"
+  train_data_gridsize: "<COLAB>/list_dgs_perovskite_train"
+  train_label_gridsize: "<COLAB>/list_lgs_perovskite_train"
+
+  use_charge_dataset: true
+  data_augmentation: true       # exact 90-deg grid automorphisms (plan R1.2)
+  downsample_data: 1
+  downsample_label: 1
+  normalize_density: false
+
+  # A100-40GB: perovskite cells are small; batch 4-8 is safe at native res.
+  # Drop to 2 + raise accum_iter if you hit OOM on larger cells.
+  batch_size: 4
+  num_workers: 2                # Colab gives few CPU cores
+  pin_memory: true
+
+training:
+  # Specialized run converges far faster than the 5000-epoch general model.
+  # 300 is a starting budget; resume and extend if loss is still dropping.
+  epochs: 300
+  start_epoch: 0
+
+  optimizer: "AdamW"
+  learning_rate: 0.0001
+  optimizer_betas: [0.9, 0.95]
+  decay_lr: true
+  accum_iter: 4                 # effective batch ~16 with batch_size 4
+
+  class_drop_prob: 0.1
+
+  # IMPORTANT (Colab): save_frequency is in EPOCHS. Set this so a checkpoint
+  # lands roughly every 15-20 min for YOUR measured epoch time, so a
+  # disconnect loses minimal work. The notebook auto-tunes this after the
+  # first timed epoch. Default assumes ~1-2 min/epoch.
+  save_frequency: 10
+  save_best: true
+  log_frequency: 10
+
+  # Near-core-weighted auxiliary loss — highest-leverage knob for <1%
+  # (plan R1.3). Wire in src/training/train_loop_subMP12k_charge.py.
+  # loss_type: l2
+  # alpha: 2.0
+
+evaluation:
+  eval_frequency: 50
+  compute_fid: false
+  save_samples: true
+
+ode:
+  method: "dopri5"
+  options:
+    atol: 1.0e-5
+    rtol: 1.0e-5
+  cfg_scale: 1.0
+  sampling_dtype: "float32"
+  skewed_timesteps: true
+  edm_schedule: true
+
+# Single Colab GPU — distributed OFF (the general config had it ON for SLURM).
+distributed:
+  enabled: false
+  backend: "nccl"
+  init_method: "env://"
+
+output:
+  # Filled in by the notebook -> a Google Drive path so checkpoints survive
+  # session disconnects (e.g. /content/drive/MyDrive/chargeflow/output_perovskite)
+  output_dir: "<COLAB>/output_perovskite"
+  save_postfix: "Perovskite_E2a"
+  log_file: "training_perovskite.log"
+
+seed: 42
+device: "cuda"
+test_run: false
+eval_only: false

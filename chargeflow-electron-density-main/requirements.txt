@@ -1,0 +1,43 @@
+# Python dependencies for Charged Electron Density Prediction
+
+# Core dependencies
+torch>=1.10.0
+numpy>=1.20.0
+scipy>=1.7.0
+
+# Data handling
+h5py>=3.0.0
+pyyaml>=5.4.0
+
+# ODE solvers
+torchdiffeq>=0.2.0
+
+# Distributed training
+submitit>=1.4.0
+
+# Metrics and evaluation
+torchmetrics[image]>=0.6.0
+
+# Visualization (optional)
+matplotlib>=3.3.0
+seaborn>=0.11.0
+
+# Progress bars
+tqdm>=4.60.0
+
+# Model architecture
+torchvision>=0.11.0
+
+# Logging and monitoring (optional)
+tensorboard>=2.8.0
+wandb>=0.12.0
+
+# Development dependencies
+pytest>=6.2.0
+black>=21.0
+flake8>=3.9.0
+isort>=5.9.0
+
+# Documentation
+sphinx>=4.0.0
+sphinx-rtd-theme>=0.5.0

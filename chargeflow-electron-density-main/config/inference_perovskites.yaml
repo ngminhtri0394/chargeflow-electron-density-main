@@ -1,0 +1,27 @@
+# Inference Configuration: Perovskites
+# Perovskite materials test set
+
+model:
+  name: "unet3d"
+  in_channels: 1
+  out_channels: 1
+
+data:
+  test_data_list: "data_lists/test_sets/list_d_perovskites"
+  test_label_list: "data_lists/test_sets/list_l_perovskites"
+  test_data_gridsize: "data_lists/test_sets/list_dgs_perovskites"
+  test_label_gridsize: "data_lists/test_sets/list_lgs_perovskites"
+  train_stats: "data_lists/stats/train_stats_perovskites.json"
+  batch_size: 1
+  num_workers: 4
+
+inference:
+  num_steps: 50
+  ode_method: "heun2"
+  use_ema: true
+  save_predictions: true
+  calculate_metrics: true
+
+output:
+  output_dir: "predictions/perovskites"
+  log_file: "predictions/perovskites/inference.log"

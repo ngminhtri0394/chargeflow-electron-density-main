@@ -1,0 +1,97 @@
+# Configuration for Charged System Training
+
+# Model configuration
+model:
+  architecture: "cifar10"
+  discrete_flow_matching: false
+  use_ema: true  # Enable EMA for better inference quality
+
+# Data configuration - Charged systems
+data:
+  # Training data paths for charged systems
+  train_data_list: "/path/to/list_d_charged_train"
+  train_label_list: "/path/to/list_l_charged_train"
+  train_data_gridsize: "/path/to/list_dgs_charged_train"
+  train_label_gridsize: "/path/to/list_lgs_charged_train"
+  
+  # Use charge-aware dataset
+  use_charge_dataset: true  # Extract and use charge level information
+  
+  # Data processing
+  data_augmentation: true
+  downsample_data: 1
+  downsample_label: 1
+  normalize_density: false
+  
+  # DataLoader settings
+  batch_size: 16  # May need smaller batch size for charged systems
+  num_workers: 8
+  pin_memory: true
+
+# Training configuration
+training:
+  epochs: 5000
+  start_epoch: 0
+  
+  # Optimizer settings
+  optimizer: "AdamW"
+  learning_rate: 0.0001
+  optimizer_betas: [0.9, 0.95]
+  decay_lr: true  # Use learning rate decay
+  
+  # Gradient accumulation
+  accum_iter: 2  # Increase effective batch size
+  
+  # Regularization
+  class_drop_prob: 0.1  # Use conditioning dropout for robustness
+  
+  # Checkpointing
+  save_frequency: 50
+  save_best: true
+  
+  # Logging
+  log_frequency: 10
+
+# Evaluation configuration
+evaluation:
+  eval_frequency: 50
+  compute_fid: false
+  fid_samples: 10000
+  save_samples: true
+
+# ODE solver configuration
+ode:
+  method: "dopri5"  # Adaptive solver for better quality
+  options:
+    atol: 1.0e-5
+    rtol: 1.0e-5
+  
+  # Sampling settings
+  cfg_scale: 1.0  # Use classifier-free guidance
+  sampling_dtype: "float32"
+  
+  # EDM-specific settings
+  skewed_timesteps: true  # Better for charged systems
+  edm_schedule: true
+
+# Distributed training
+distributed:
+  enabled: true
+  backend: "nccl"
+  init_method: "env://"
+
+# Output configuration
+output:
+  output_dir: "./output_dir_charged"
+  save_postfix: "FlowEDP_Charged"
+  log_file: "training_charged.log"
+
+# Reproducibility
+seed: 42
+
+# Device configuration
+device: "cuda"
+
+# Testing/debugging
+test_run: false
+eval_only: false

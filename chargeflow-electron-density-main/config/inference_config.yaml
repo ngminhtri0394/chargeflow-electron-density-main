@@ -1,0 +1,62 @@
+# Inference Configuration for Charged Electron Density Prediction
+
+# Model configuration
+model:
+  architecture: "cifar10"  # Must match training config
+  discrete_flow_matching: false
+  use_ema: false
+  checkpoint_path: "./output_dir/checkpoint-best.pth"  # Path to trained model
+
+# Data configuration
+data:
+  # Input data paths
+  data_list: "/path/to/list_d_test"
+  data_gridsize: "/path/to/list_dgs_test"
+  
+  # Optional label paths (for computing metrics)
+  label_list: "/path/to/list_l_test"
+  label_gridsize: "/path/to/list_lgs_test"
+  
+  # Data processing
+  data_augmentation: false  # Typically false for inference
+  downsample_data: 1
+  downsample_label: 1
+  
+  # DataLoader settings
+  batch_size: 1  # Typically process one at a time for inference
+  num_workers: 4
+  pin_memory: true
+
+# ODE solver configuration
+ode:
+  method: "midpoint"
+  options:
+    step_size: 0.01
+  
+  # Sampling settings
+  cfg_scale: 0.0
+  sampling_dtype: "float32"
+  
+  # EDM-specific settings
+  skewed_timesteps: false
+  edm_schedule: false
+
+# Output configuration
+output:
+  output_dir: "./predictions"
+  save_predictions: true  # Save predicted densities
+  save_format: "npy"  # Format for saving (npy, npz, or cube)
+  compute_metrics: true  # Compute metrics if labels are available
+  save_metrics: true  # Save metrics to file
+  
+# Device configuration
+device: "cuda"
+
+# Distributed inference (optional)
+distributed:
+  enabled: false
+  backend: "nccl"
+  init_method: "env://"
+
+# Reproducibility
+seed: 0

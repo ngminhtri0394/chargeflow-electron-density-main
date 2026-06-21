@@ -1,0 +1,99 @@
+# Training Configuration for Charged Electron Density Prediction
+
+# Model configuration
+model:
+  architecture: "cifar10"  # Model architecture type
+  discrete_flow_matching: false  # Use discrete flow matching
+  use_ema: false  # Use Exponential Moving Average for model weights
+
+# Data configuration
+data:
+  # Training data paths (update these with your actual paths)
+  train_data_list: "/path/to/list_d_train"
+  train_label_list: "/path/to/list_l_train"
+  train_data_gridsize: "/path/to/list_dgs_train"
+  train_label_gridsize: "/path/to/list_lgs_train"
+  
+  # Validation data paths (optional)
+  val_data_list: null
+  val_label_list: null
+  val_data_gridsize: null
+  val_label_gridsize: null
+  
+  # Data processing
+  data_augmentation: true
+  downsample_data: 1  # Downsampling factor for input data
+  downsample_label: 1  # Downsampling factor for labels
+  normalize_density: false  # Whether to normalize densities
+  
+  # DataLoader settings
+  batch_size: 32
+  num_workers: 10
+  pin_memory: true
+
+# Training configuration
+training:
+  epochs: 10000
+  start_epoch: 0
+  
+  # Optimizer settings
+  optimizer: "AdamW"
+  learning_rate: 0.0001
+  optimizer_betas: [0.9, 0.95]
+  decay_lr: false  # Use linear learning rate decay
+  
+  # Gradient accumulation
+  accum_iter: 1  # Gradient accumulation steps
+  
+  # Regularization
+  class_drop_prob: 0.0  # Probability to drop conditioning during training
+  
+  # Checkpointing
+  save_frequency: 100  # Save checkpoint every N epochs
+  save_best: true  # Save best model based on validation loss
+  
+  # Logging
+  log_frequency: 10  # Log training stats every N steps
+
+# Evaluation configuration
+evaluation:
+  eval_frequency: 1  # Evaluate every N epochs (-1 to disable)
+  compute_fid: false  # Compute FID score during evaluation
+  fid_samples: 50000  # Number of samples for FID computation
+  save_samples: false  # Save generated samples during evaluation
+
+# ODE solver configuration (for sampling)
+ode:
+  method: "midpoint"  # ODE solver method
+  options:
+    step_size: 0.01  # Step size for fixed-step solvers
+  
+  # Sampling settings
+  cfg_scale: 0.0  # Classifier-free guidance scale
+  sampling_dtype: "float32"  # Dtype for sampling (float32 or float64)
+  
+  # EDM-specific settings
+  skewed_timesteps: false  # Use skewed timestep sampling
+  edm_schedule: false  # Use EDM time discretization
+
+# Distributed training
+distributed:
+  enabled: false  # Enable distributed training
+  backend: "nccl"  # Backend for distributed training
+  init_method: "env://"  # Initialization method
+
+# Output configuration
+output:
+  output_dir: "./output_dir"
+  save_postfix: "FlowEDP"
+  log_file: "training.log"
+
+# Reproducibility
+seed: 0
+
+# Device configuration
+device: "cuda"  # Device to use (cuda or cpu)
+
+# Testing/debugging
+test_run: false  # Run one epoch for testing
+eval_only: false  # Only run evaluation, no training

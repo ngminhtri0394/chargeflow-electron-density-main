@@ -1,0 +1,16 @@
+# Quick Test Preset
+# Fast test run with minimal resources
+
+resources:
+  single_gpu:
+    partition: "gpu"
+    time: "00:30:00"
+    memory: "16G"
+
+training:
+  batch_size: 4
+  num_epochs: 5
+  test_run: true
+
+paths:
+  output_dir: "${code_dir}/test_output"
