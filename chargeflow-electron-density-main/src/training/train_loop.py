@@ -152,7 +152,19 @@ def train_one_epoch(
 
             with torch.amp.autocast(device_type="cuda"):
                 pred = model(x_t, t, extra=conditioning)
-                l2_loss = torch.pow(pred - u_t, 2).mean()
+                # Near-core-weighted L2 (plan R1.3): ε_MAE is dominated by high-density
+                # voxels near atoms. Weight the velocity-matching loss by the target
+                # density so the model prioritizes those regions. core_weight=0 recovers
+                # the plain uniform L2.
+                core_weight = getattr(args, "core_weight", 0.0)
+                if core_weight > 0.0:
+                    # high_rs is the DFT target density (>=0); normalize per-sample to a
+                    # mean of 1 so the loss scale stays comparable to the uniform L2.
+                    w = high_rs.to(pred.dtype)
+                    w = 1.0 + core_weight * (w / (w.mean() + 1e-8))
+                    l2_loss = (w * torch.pow(pred - u_t, 2)).mean()
+                else:
+                    l2_loss = torch.pow(pred - u_t, 2).mean()
                 if normmae_loss is not None:
                     if args.start_sad:
                         if args.norm_rho:

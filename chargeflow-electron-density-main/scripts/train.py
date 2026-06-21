@@ -375,6 +375,7 @@ class TrainArgs:
         self.skewed_timesteps = config['ode'].get('skewed_timesteps', False)
         self.start_sad = config['training'].get('start_sad', False)
         self.test_run = config.get('test_run', False)
+        self.core_weight = config['training'].get('core_weight', 0.0)
 
 
 def create_train_args(config: dict):
