@@ -273,7 +273,9 @@ def eval_model_edp(
     PREDICTION_DIR = '/vast/minhtrin/Charged_electron_density/FlowEDP/predictions/'
     VISUALIZATION_DIR = '/vast/minhtrin/Charged_electron_density/FlowEDP/visualizations/'
     from tqdm import tqdm
-    for data_iter_step, (samples, labels) in tqdm(enumerate(data_loader), total=len(data_loader)):
+    for data_iter_step, batch in tqdm(enumerate(data_loader), total=len(data_loader)):
+        # charge-aware dataset yields (input, target, charge); plain yields (input, target)
+        samples, labels = batch[0], batch[1]
         samples = samples.to(device, non_blocking=True)
         labels = labels.to(device, non_blocking=True)
 
@@ -536,7 +538,9 @@ def eval_model_edp_distributed(
 
     from tqdm import tqdm
     rank = distributed_mode.get_rank()
-    for data_iter_step, (samples, labels) in tqdm(enumerate(data_loader), total=len(data_loader)):
+    for data_iter_step, batch in tqdm(enumerate(data_loader), total=len(data_loader)):
+        # charge-aware dataset yields (input, target, charge); plain yields (input, target)
+        samples, labels = batch[0], batch[1]
         samples = samples.to(device, non_blocking=True)
         labels = labels.to(device, non_blocking=True)
 
