@@ -73,7 +73,11 @@ def train_one_epoch(
         normmae_loss = NormMAE()
 
     for data_iter_step, batch in enumerate(data_loader):
-        low_rs, high_rs = batch[0], batch[1]  # ignore charge label if present
+        low_rs, high_rs = batch[0], batch[1]
+        # charge-aware dataset yields a 3rd element: per-sample charge class index.
+        # The U-Net's label embedding (num_classes) expects a 1D (batch,) class
+        # tensor here, NOT the density volume.
+        charge_level = batch[2] if len(batch) > 2 else None
         if data_iter_step % accum_iter == 0:
             optimizer.zero_grad()
             batch_loss.reset()
@@ -82,11 +86,15 @@ def train_one_epoch(
 
         low_rs = low_rs.to(device, non_blocking=True)
         high_rs = high_rs.to(device, non_blocking=True)
+        if charge_level is not None:
+            charge_level = charge_level.to(device, non_blocking=True)
 
         if torch.rand(1) < args.class_drop_prob:
             conditioning = {}
+        elif charge_level is not None:
+            # charge-conditioned: class index as label, density as concat input
+            conditioning = {"label": charge_level, "concat_conditioning": low_rs}
         else:
-            # conditioning = {"label": low_rs}
             if args.start_sad:
                 conditioning = {"label": low_rs}
             else:
