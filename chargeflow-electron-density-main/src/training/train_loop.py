@@ -89,11 +89,16 @@ def train_one_epoch(
         if charge_level is not None:
             charge_level = charge_level.to(device, non_blocking=True)
 
-        if torch.rand(1) < args.class_drop_prob:
+        drop_label = torch.rand(1) < args.class_drop_prob
+        if charge_level is not None:
+            # charge-conditioned: class index as label, density as concat input.
+            # On classifier-free-guidance drop, drop ONLY the charge label —
+            # concat_conditioning must stay so the input keeps in_channels=2.
+            conditioning = {"concat_conditioning": low_rs}
+            if not drop_label:
+                conditioning["label"] = charge_level
+        elif drop_label:
             conditioning = {}
-        elif charge_level is not None:
-            # charge-conditioned: class index as label, density as concat input
-            conditioning = {"label": charge_level, "concat_conditioning": low_rs}
         else:
             if args.start_sad:
                 conditioning = {"label": low_rs}
