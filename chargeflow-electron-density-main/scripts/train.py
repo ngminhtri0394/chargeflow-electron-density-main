@@ -325,6 +325,7 @@ def train(config: dict, args):
                         optimizer=optimizer,
                         lr_schedule=lr_schedule,
                         loss_scaler=loss_scaler,
+                        bestloss=best_loss,
                     )
                     logger.info(f"Saved best model (loss: {best_loss:.6f})")
         else:
@@ -341,6 +342,7 @@ def train(config: dict, args):
                 lr_schedule=lr_schedule,
                 loss_scaler=loss_scaler,
                 epoch=epoch,
+                bestloss=best_loss,
             )
             logger.info(f"Saved checkpoint at epoch {epoch}")
         
