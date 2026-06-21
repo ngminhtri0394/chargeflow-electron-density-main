@@ -23,6 +23,35 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.data.dataset import RhoDataset, RhoDatasetCharge
 from src.models.model_configs import instantiate_model
+import torch.nn.functional as F
+
+
+def pad_collate(batch):
+    """Collate variable-size 3D density tensors by zero-padding to the batch max."""
+    # batch items are (input, target) or (input, target, charge)
+    has_charge = len(batch[0]) == 3
+    inputs  = [item[0] for item in batch]
+    targets = [item[1] for item in batch]
+    charges = [item[2] for item in batch] if has_charge else None
+
+    def pad_to_max(tensors):
+        max_d = max(t.shape[1] for t in tensors)
+        max_h = max(t.shape[2] for t in tensors)
+        max_w = max(t.shape[3] for t in tensors)
+        padded = []
+        for t in tensors:
+            pd = max_d - t.shape[1]
+            ph = max_h - t.shape[2]
+            pw = max_w - t.shape[3]
+            # F.pad pads last dims first: (left, right, top, bot, front, back)
+            padded.append(F.pad(t, (0, pw, 0, ph, 0, pd)))
+        return torch.stack(padded)
+
+    inputs_t  = pad_to_max(inputs)
+    targets_t = pad_to_max(targets)
+    if has_charge:
+        return inputs_t, targets_t, torch.tensor(charges)
+    return inputs_t, targets_t
 from src.training import distributed_mode
 from src.training.grad_scaler import NativeScalerWithGradNormCount as NativeScaler
 from src.training.load_and_save import load_model, save_model, save_best_model
@@ -145,7 +174,7 @@ def create_dataloaders(config: dict, logger):
         shuffle=True
     )
     
-    # Create dataloader
+    # Create dataloader — pad_collate handles variable grid sizes across structures
     dataloader_train = torch.utils.data.DataLoader(
         train_dataset,
         sampler=sampler_train,
@@ -153,6 +182,7 @@ def create_dataloaders(config: dict, logger):
         num_workers=data_config.get('num_workers', 10),
         pin_memory=data_config.get('pin_memory', True),
         drop_last=True,
+        collate_fn=pad_collate,
     )
     
     return dataloader_train, sampler_train

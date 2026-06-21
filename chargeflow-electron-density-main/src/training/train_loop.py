@@ -72,7 +72,8 @@ def train_one_epoch(
     if not args.discrete_flow_matching and args.loss_type in {"normmae", "hybrid"}:
         normmae_loss = NormMAE()
 
-    for data_iter_step, (low_rs, high_rs) in enumerate(data_loader):
+    for data_iter_step, batch in enumerate(data_loader):
+        low_rs, high_rs = batch[0], batch[1]  # ignore charge label if present
         if data_iter_step % accum_iter == 0:
             optimizer.zero_grad()
             batch_loss.reset()
