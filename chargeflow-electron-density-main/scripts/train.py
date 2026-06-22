@@ -265,11 +265,14 @@ def train(config: dict, args):
     # Load checkpoint if resuming
     start_epoch = config['training'].get('start_epoch', 0)
     if args.resume:
-        # Create a simple args object for load_model compatibility
+        # Create a simple args object for load_model compatibility.
+        # load_model sets load_args.start_epoch = checkpoint_epoch + 1, so read it back
+        # to actually CONTINUE from the saved epoch instead of restarting at 0.
         class LoadArgs:
             def __init__(self):
                 self.resume = args.resume
-        
+                self.start_epoch = start_epoch
+
         load_args = LoadArgs()
         load_model(
             args=load_args,
@@ -278,7 +281,8 @@ def train(config: dict, args):
             loss_scaler=loss_scaler,
             lr_schedule=lr_schedule,
         )
-        logger.info(f"Resumed from checkpoint: {args.resume}")
+        start_epoch = load_args.start_epoch   # resumed epoch (checkpoint_epoch + 1)
+        logger.info(f"Resumed from checkpoint: {args.resume} -> continuing at epoch {start_epoch}")
     
     # Training loop
     epochs = config['training'].get('epochs', 10000)
